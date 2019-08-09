@@ -45,12 +45,5 @@ WORKDIR /app
 COPY . /app
 RUN npm install
 
-# Add user so we don't need --no-sandbox.
-# same layer as npm install to keep re-chowned files from using up several hundred MBs more space
-RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
-      && mkdir -p /home/pptruser \
-      && chown -R pptruser:pptruser /home/pptruser \
-      && chown -R pptruser:pptruser /app
-
 # Start script on Xvfb
-CMD Xvfb :99 -screen 0 1920x1080x24 -dpi 96 -ac +extension RANDR & su - pptruser -s cd /app;/usr/local/bin/node server.js
+CMD Xvfb :99 -screen 0 1920x1080x24 -dpi 96 -ac +extension RANDR & node server.js

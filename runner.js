@@ -46,7 +46,7 @@ const taskFull = async () => {
       "ws": ws,
       "browserArgs": {
          "headless": false,
-         "args": ["--proxy-server-(remove this)=socks5://127.0.0.1:1080"],
+         "args": ["--no-sandbox", "--proxy-server-(remove this)=socks5://127.0.0.1:1080"],
       },
       "viewport": { "width": 1920, "height": 1066 },
       "timeout": 30000,
@@ -72,6 +72,7 @@ const taskFull = async () => {
 
 const taskSimple = async () => {
    return {
+      "browserArgs": { "args": ["--no-sandbox"] },
       "actions": {
          "url": "https://www.baidu.com",
          "steps": [

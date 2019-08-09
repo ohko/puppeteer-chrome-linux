@@ -7,7 +7,7 @@ docker run --name=puppeteer --restart=always -p 127.0.0.1:5400:8080 ohko/puppete
 
 # install
 ```
-npm install
+yarn install
 ```
 
 # test cli
