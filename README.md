@@ -2,7 +2,7 @@
 ```
 docker rm -fv puppeteer
 docker pull ohko/puppeteer-chrome-linux
-docker run --name=puppeteer --restart=always -p 127.0.0.1:5400:8080 ohko/puppeteer-chrome-linux
+docker run -d --name=puppeteer --restart=always -p 127.0.0.1:5400:8080 ohko/puppeteer-chrome-linux
 ```
 
 # install

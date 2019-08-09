@@ -14,17 +14,17 @@ const runner = async (task) => {
       task.userAgent && await page.setUserAgent(task.userAgent)
 
       // steps
-      let options = task.actions.options || {}
-      await page.goto(task.actions.url, options);
+      let options = task.action.options || {}
+      await page.goto(task.action.url, options);
 
-      for (let i = 0; i < task.actions.steps.length; i++) {
-         const step = task.actions.steps[i];
-         // await task.actions.steps.forEach(async (step) => {
+      for (let i = 0; i < task.action.steps.length; i++) {
+         const step = task.action.steps[i];
+         // await task.action.steps.forEach(async (step) => {
          // console.log("===== STEP:", (i + 1), "=====\n", step)
-         step.waitText && await page.waitForFunction(step => { return document.documentElement.outerHTML.match(new RegExp(step.waitText)) }, {}, step)
+         step.waitText && await page.waitForFunction(step => { return document.body.outerHTML.match(new RegExp(step.waitText)) }, {}, step)
          step.waitSelector && await page.waitForSelector(step.waitSelector)
          const result = await page.evaluate(step.js)
-         if (i == task.actions.steps.length - 1) return { no: 0, data: result }
+         if (i == task.action.steps.length - 1) return { no: 0, data: result }
          // })
       }
 
@@ -51,7 +51,7 @@ const taskFull = async () => {
       "viewport": { "width": 1920, "height": 1066 },
       "timeout": 30000,
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
-      "actions": {
+      "action": {
          "url": "https://www.baidu.com",
          "options": { "timeout": 30000, "waitUntil": "load", "referer": "" },
          "steps": [
@@ -73,7 +73,7 @@ const taskFull = async () => {
 const taskSimple = async () => {
    return {
       "browserArgs": { "args": ["--no-sandbox"] },
-      "actions": {
+      "action": {
          "url": "https://www.baidu.com",
          "steps": [
             {
