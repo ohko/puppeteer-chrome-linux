@@ -1,0 +1,26 @@
+{
+  "name": "puppeteer-chrome-linux",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "puppeteer": "^1.19.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node test.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ohko/puppeteer-chrome-linux.git"
+  },
+  "author": "ohko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ohko/puppeteer-chrome-linux/issues"
+  },
+  "homepage": "https://github.com/ohko/puppeteer-chrome-linux#readme"
+}
