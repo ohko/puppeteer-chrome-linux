@@ -35,7 +35,7 @@ const taskFull =
    "ws": "ws://127.0.0.1:9222/devtools/browser/29ad7062-4212-44e2-8267-23d8f0f32714",
    "browserArgs": {
       "headless": true,
-      "args": ["--proxy-server=socks5://127.0.0.1:1080"],
+      "args": ["--no-sandbox", "--proxy-server=socks5://127.0.0.1:1080"],
    },
    "viewport": { "width": 1920, "height": 1066 },
    "timeout": 30000,
@@ -60,6 +60,9 @@ const taskFull =
 
 const taskSimple =
 {
+   "browserArgs": {
+      "args": ["--no-sandbox"],
+   },
    "actions": {
       "url": "https://www.baidu.com",
       "steps": [
