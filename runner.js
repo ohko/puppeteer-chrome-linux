@@ -19,13 +19,18 @@ const runner = async (task) => {
 
       for (let i = 0; i < task.action.steps.length; i++) {
          const step = task.action.steps[i];
-         // await task.action.steps.forEach(async (step) => {
-         // console.log("===== STEP:", (i + 1), "=====\n", step)
-         step.waitText && await page.waitForFunction(step => { return document.body.outerHTML.match(new RegExp(step.waitText)) }, {}, step)
+         console.log("===== STEP:", (i + 1), "=====\n", step)
+
+         step.waitText && await page.waitForFunction(step => {
+            // document.documentElement.outerHTML
+            // document.children[0].outerHTML
+            // document.body.outerHTML
+            return document.children[0].outerHTML.match(new RegExp(step.waitText))
+         }, {}, step)
          step.waitSelector && await page.waitForSelector(step.waitSelector)
-         const result = await page.evaluate(step.js)
+
+         const result = await page.evaluate(step.js || "(_=>{return document.children[0].outerHTML})()")
          if (i == task.action.steps.length - 1) return { no: 0, data: result }
-         // })
       }
 
       return { no: 1, data: "not found steps" }
