@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Document</title>
+   <link rel="stylesheet" href="/lib/codemirror/codemirror.css">
+   <script src="/lib/codemirror/codemirror.js"></script>
+   <script src="/lib/codemirror/mode/javascript/javascript.js"></script>
+   <style>
+      html,
+      body,
+      table,
+      td,
+      form,
+      textarea {
+         height: 100%;
+      }
+
+      table {
+         width: 100%;
+      }
+
+      td {
+         width: 50%
+      }
+
+      form {
+         width: 100%
+      }
+
+      .CodeMirror {
+         border: 1px solid #eee;
+      }
+   </style>
+</head>
+
+<body>
+   <table>
+      <tr>
+         <td>
+            <form method="POST" action="/run" target="_blank">
+               <input type="submit" value="Run Simple">
+               <textarea name="task"></textarea>
+            </form>
+         </td>
+         <td>
+            <form method="POST" action="/run" target="_blank">
+               <input type="submit" value="Run Full">
+               <textarea name="task"></textarea>
+            </form>
+         </td>
+      </tr>
+   </table>
+</body>
+
+<script>
+   var editor = [];
+   document.querySelectorAll("textarea").forEach(function (x) {
+      editor.push(CodeMirror.fromTextArea(x, {
+         mode: { name: "javascript", globalVars: true },
+         lineNumbers: true,
+         lineWrapping: true,
+      }))
+   })
+   document.body.onresize = function () {
+      document.querySelectorAll(".CodeMirror").forEach(function (x) {
+         x.style.width = (document.body.clientWidth / 2) + "px"
+         x.style.height = (document.body.clientHeight - 50) + "px"
+      })
+   }
+   setTimeout(document.body.onresize)
+
+   var xhr = new XMLHttpRequest();
+   xhr.responseType = "json";
+   xhr.open('GET', '/demo.json', true);
+   xhr.onload = function (e) {
+      if (this.status == 200) {
+         editor[0].setValue(this.response.simple)
+         editor[1].setValue(this.response.full)
+      }
+   };
+   xhr.send();
+</script>
+
+</html>
