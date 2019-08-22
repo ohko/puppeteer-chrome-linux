@@ -3,37 +3,52 @@ const axios = require("axios")
 
 const runner = async (task) => {
    let browser
+   let defaultTask = {
+      "ws": "",
+      "browserArgs": {
+         "headless": true,
+         "args": ["--no-sandbox", "--proxy-server-(remove this)=socks5://127.0.0.1:1080"],
+      },
+      "viewport": { "width": 1024, "height": 768 },
+      "timeout": 0,
+      "userAgent": "",
+      "action": {
+         "url": "",
+         "options": {},
+         "steps": []
+      }
+   }
+   task = Object.assign(defaultTask, task)
+
+   if (task.action.url == "") return { no: 1, data: "url is empty" }
+   if (task.action.steps.length == 0) return { no: 1, data: "not found steps" }
+
    try {
       // init
       browser = task.ws ? await puppeteer.connect({ browserWSEndpoint: task.ws }) : await puppeteer.launch(task.browserArgs);
       const page = task.ws ? (await browser.pages()).shift() : await browser.newPage();
 
       // setting
-      await page.setViewport(task.viewport || { width: 1920, height: 1066 })
-      task.timeout && await page.setDefaultNavigationTimeout(task.timeout)
+      await page.setViewport(task.viewport)
+      task.timeout > 0 && await page.setDefaultNavigationTimeout(task.timeout)
       task.userAgent && await page.setUserAgent(task.userAgent)
 
       // steps
-      let options = task.action.options || {}
-      await page.goto(task.action.url, options);
+      await page.goto(task.action.url, task.action.options);
 
+      let result
       for (let i = 0; i < task.action.steps.length; i++) {
          const step = task.action.steps[i];
          console.log("===== STEP:", (i + 1), "=====\n", step)
 
          step.waitText && await page.waitForFunction(step => {
-            // document.documentElement.outerHTML
-            // document.children[0].outerHTML
-            // document.body.outerHTML
-            return document.children[0].outerHTML.match(new RegExp(step.waitText))
+            try { return document.documentElement.outerHTML.match(new RegExp(step.waitText)) } catch (e) { return null }
          }, {}, step)
          step.waitSelector && await page.waitForSelector(step.waitSelector)
 
-         const result = await page.evaluate(step.js || "(_=>{return document.children[0].outerHTML})()")
-         if (i == task.action.steps.length - 1) return { no: 0, data: result }
+         result = step.js ? await page.evaluate(step.js) : await page.content()
       }
-
-      return { no: 1, data: "not found steps" }
+      return { no: 0, data: result }
    } catch (e) {
       return { no: 1, data: e.message ? e.message : e }
    } finally {
