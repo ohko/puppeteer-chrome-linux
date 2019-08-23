@@ -130,7 +130,7 @@ const taskSimple = async () => {
                "while": [
                   {
                      "waitSelector": "#content_left",
-                     "js": "(_=>{document.querySelector('#content_left').outerHTML = '';document.querySelector('.n').click(); return document.documentElement.outerHTML.match(/上一页/)?0:1})()"
+                     "js": "(_=>{document.querySelector('#content_left').remove();document.querySelector('.n').click(); return document.documentElement.outerHTML.match(/上一页/)?0:1})()"
                   }
                ]
             },
