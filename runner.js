@@ -50,6 +50,28 @@ const runner = async (task) => {
          }, {}, step)
          step.waitSelector && await page.waitForSelector(step.waitSelector)
 
+         // 死循环，直到返回0
+         if (step.while) {
+            let count = 0
+            console.log("----- SUB START -----")
+            logs.push("SUB START:")
+            const subSteps = step.while;
+            while (result !== 0) {
+               count++
+               for (let j = 0; j < subSteps.length; j++) {
+                  const subStep = subSteps[j];
+                  console.log("----- SUB STEP:", count + "-" + (j + 1), "-----\n" + JSON.stringify(subStep, "", 2))
+                  logs.push("SUB STEP." + count + "-" + (j + 1) + ": " + JSON.stringify(subStep))
+                  subStep.waitText && await page.waitForFunction(subStep => {
+                     try { return document.documentElement.outerHTML.match(new RegExp(subStep.waitText)) } catch (e) { return null }
+                  }, {}, subStep)
+                  subStep.waitSelector && await page.waitForSelector(subStep.waitSelector)
+                  result = subStep.js ? await page.evaluate(subStep.js) : await page.content()
+                  if (result === 0) break
+               }
+            }
+         }
+
          result = step.js ? await page.evaluate(step.js) : await page.content()
       }
       return { no: 0, data: result, logs: logs }
@@ -98,16 +120,24 @@ const taskSimple = async () => {
    return {
       "browserArgs": { "args": ["--no-sandbox"] },
       "action": {
-         "url": "https://bing.com",
+         "url": "https://www.baidu.com",
          "steps": [
             {
-               "waitSelector": ".b_searchbox",
-               "js": "document.querySelector('.b_searchbox').value='apple stock price';document.querySelector('.b_searchbox').form.submit()"
+               "waitSelector": "#kw",
+               "js": "var k=document.querySelector('#kw');k.value='百度股价';k.form.submit()"
             },
             {
-               "waitText": "NASDAQ: AAPL",
-               "waitSelector": ".b_focusTextMedium",
-               "js": "(_=>{return document.querySelector('.b_focusTextMedium').textContent})()"
+               "while": [
+                  {
+                     "waitSelector": "#content_left",
+                     "js": "(_=>{document.querySelector('#content_left').outerHTML = '';document.querySelector('.n').click(); return document.documentElement.outerHTML.match(/上一页/)?0:1})()"
+                  }
+               ]
+            },
+            {
+               "waitText": "[BIDU]",
+               "waitSelector": ".op-stockdynamic-moretab-cur-num",
+               "js": "(_=>{return document.querySelector('.op-stockdynamic-moretab-cur-num').textContent})()"
             }
          ]
       }
