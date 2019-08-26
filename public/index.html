@@ -35,9 +35,10 @@
          border: 1px solid #eee;
       }
 
-      iframe {
+      #simple,
+      #full {
          width: 100%;
-         height: 100px;
+         height: 200px;
       }
    </style>
 </head>
@@ -46,21 +47,25 @@
    <table>
       <tr>
          <td>
-            <form method="POST" action="/run" target="simple">
-               <textarea name="task"></textarea>
-               <input type="submit" value="Run Simple">
+            <form onsubmit="return run(this,0,'simple')">
+               <textarea name="task">1</textarea>
+               <input type="submit" value="Run">
             </form>
          </td>
          <td>
-            <form method="POST" action="/run" target="full">
-               <textarea name="task"></textarea>
-               <input type="submit" value="Run Full">
+            <form onsubmit="return run(this,1,'full')">
+               <textarea name="task">2</textarea>
+               <input type="submit" value="Run">
             </form>
          </td>
       </tr>
       <tr valign="top">
-         <td><iframe name="simple"></iframe></td>
-         <td><iframe name="full"></iframe></td>
+         <td>
+            <pre id="simple"></pre>
+         </td>
+         <td>
+            <pre id="full"></pre>
+         </td>
       </tr>
    </table>
 </body>
@@ -77,7 +82,7 @@
    document.body.onresize = function () {
       document.querySelectorAll(".CodeMirror").forEach(function (x) {
          x.style.width = (document.body.clientWidth / 2) + "px"
-         x.style.height = (document.body.clientHeight - 150) + "px"
+         x.style.height = (document.body.clientHeight - 250) + "px"
       })
    }
    setTimeout(document.body.onresize)
@@ -92,6 +97,29 @@
       }
    };
    xhr.send();
+
+   function run(o, index, show) {
+      const btn = o.querySelector("input")
+      btn.disabled = true
+      btn.value = "running..."
+
+      let formData = new FormData();
+      formData.append("task", editor[index].getValue());
+
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = "json";
+      xhr.open('POST', '/run');
+      xhr.setRequestHeader('Content-type', 'application/json');
+      xhr.onload = function (e) {
+         if (this.status == 200) {
+            btn.value = "Run"
+            btn.disabled = false
+            document.getElementById(show).innerHTML = JSON.stringify(xhr.response, "", 2)
+         }
+      };
+      xhr.send(JSON.stringify({ "task": editor[index].getValue() }));
+      return false
+   }
 </script>
 
 </html>
