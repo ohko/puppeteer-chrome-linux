@@ -109,7 +109,7 @@
       var xhr = new XMLHttpRequest();
       xhr.responseType = "json";
       xhr.open('POST', '/run');
-      xhr.setRequestHeader('Content-type', 'application/json');
+      xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
       xhr.onload = function (e) {
          if (this.status == 200) {
             btn.value = "Run"
