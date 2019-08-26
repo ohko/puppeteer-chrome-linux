@@ -76,7 +76,7 @@ const taskSimple = async () => {
    return `// 简单案例: 查询apple的股价
 
 // 初始化
-const browser = await puppeteer.launch();
+const browser = await puppeteer.launch({args:["--no-sandbox"]});
 const page = await browser.newPage();
 
 logs.push("START: https://bing.com")
