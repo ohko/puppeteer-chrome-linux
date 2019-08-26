@@ -34,6 +34,11 @@
       .CodeMirror {
          border: 1px solid #eee;
       }
+
+      iframe {
+         width: 100%;
+         height: 100px;
+      }
    </style>
 </head>
 
@@ -41,17 +46,21 @@
    <table>
       <tr>
          <td>
-            <form method="POST" action="/run" target="_blank">
-               <input type="submit" value="Run Simple">
+            <form method="POST" action="/run" target="simple">
                <textarea name="task"></textarea>
+               <input type="submit" value="Run Simple">
             </form>
          </td>
          <td>
-            <form method="POST" action="/run" target="_blank">
-               <input type="submit" value="Run Full">
+            <form method="POST" action="/run" target="full">
                <textarea name="task"></textarea>
+               <input type="submit" value="Run Full">
             </form>
          </td>
+      </tr>
+      <tr valign="top">
+         <td><iframe name="simple"></iframe></td>
+         <td><iframe name="full"></iframe></td>
       </tr>
    </table>
 </body>
@@ -68,7 +77,7 @@
    document.body.onresize = function () {
       document.querySelectorAll(".CodeMirror").forEach(function (x) {
          x.style.width = (document.body.clientWidth / 2) + "px"
-         x.style.height = (document.body.clientHeight - 50) + "px"
+         x.style.height = (document.body.clientHeight - 150) + "px"
       })
    }
    setTimeout(document.body.onresize)

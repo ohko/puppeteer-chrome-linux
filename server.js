@@ -12,11 +12,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static("./public"))
 
 app.get("/demo.json", async (req, res) => {
-  res.send({ "simple": JSON.stringify(await taskSimple(), true, 2), "full": JSON.stringify(await taskFull(), true, 2) })
+  res.send({ "simple": await taskSimple(), "full": await taskFull() })
 });
 
 app.post("/run", async (req, res) => {
-  const result = await runner(JSON.parse(req.body.task));
+  const result = await runner(req.body.task);
   return res.json(result);
 });
 

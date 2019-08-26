@@ -2,17 +2,25 @@
 
 const { runner, taskFull, taskSimple } = require("./runner");
 
-(async () => {
-   const result = await runner(await taskSimple());
-   // const result = await runner(await taskFull());
-   console.log("RESULT:", result.data)
-   console.log("LOGS:\n", result.logs.join("\n"))
+(async _ => {
+
+   await (async _ => {
+      console.log("===== Simple =====")
+      const result = await runner(await taskSimple());
+      console.log("RESULT:", result)
+   })();
+
+   // sleep
+   (async _ => {
+      await new Promise(x => setTimeout(x, 2000))
+   })();
+
+   await (async _ => {
+      console.log("===== Full =====")
+      const result = await runner(await taskFull());
+      console.log("RESULT:", result)
+   })();
+
+   console.log("done");
    process.exit()
 })();
-
-
-// console.log(111);
-// (async _ => {
-//    await new Promise(x => setTimeout(x, 2000))
-// })()
-// console.log(222);
