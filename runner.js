@@ -4,7 +4,7 @@ const axios = require("axios")
 const runner = async (script) => {
    let logs = []
    try {
-      const result = await eval(`(async _=>{` + script + `})()`)
+      const result = await eval(`(async _=>{` + script.replace(/\\/g, "\\\\") + `})()`)
       return { no: 0, data: result, logs: logs }
    } catch (e) {
       return { no: 1, data: e.message ? e.message : e, logs: logs }
@@ -28,6 +28,18 @@ const browser = ws ?
 const ps = await browser.pages()
 const page = ps.length ? ps.shift() : await browser.newPage();
 await page.goto("about:blank")
+
+// console
+page.on('console', msg => {
+   for (let i = 0; i < msg.args().length; ++i)
+      console.log("\${i}: \${msg.args()[i]}");
+});
+
+// 对话框
+page.on('dialog', async dialog => {
+   console.log(dialog.message());
+   await dialog.dismiss();
+});
 
 // 设置
 await page.setViewport({width:1024, height:768})
