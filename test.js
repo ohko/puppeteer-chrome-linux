@@ -10,3 +10,9 @@ const { runner, taskFull, taskSimple } = require("./runner");
    process.exit()
 })();
 
+
+// console.log(111);
+// (async _ => {
+//    await new Promise(x => setTimeout(x, 2000))
+// })()
+// console.log(222);
