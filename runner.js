@@ -23,16 +23,22 @@ const browser = ws ?
    await puppeteer.connect({ browserWSEndpoint: ws }) :
    await puppeteer.launch({
       headless:false,
+      devtools:true,
       args:["--no-sandbox", "--proxy-server-(remove this)=socks5://127.0.0.1:1080"]
    });
 const ps = await browser.pages()
 const page = ps.length ? ps.shift() : await browser.newPage();
 await page.goto("about:blank")
 
+// 设置
+await page.setDefaultTimeout(30000)
+await page.setDefaultNavigationTimeout(30000)
+await page.setViewport({width:1024, height:768})
+await page.setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36")
+
 // console
 page.on('console', msg => {
-   for (let i = 0; i < msg.args().length; ++i)
-      console.log("\${i}: \${msg.args()[i]}");
+   for (let i = 0; i < msg.args().length; ++i) console.log(i, msg.args()[i]);
 });
 
 // 对话框
@@ -40,11 +46,6 @@ page.on('dialog', async dialog => {
    console.log(dialog.message());
    await dialog.dismiss();
 });
-
-// 设置
-await page.setViewport({width:1024, height:768})
-await page.setDefaultNavigationTimeout(3000)
-await page.setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36")
 
 logs.push("START: https://www.baidu.com")
 // 打开baidu
@@ -91,24 +92,24 @@ const taskSimple = async () => {
 const browser = await puppeteer.launch({args:["--no-sandbox"]});
 const page = await browser.newPage();
 
-logs.push("START: https://bing.com")
-// 打开bing
-await page.goto("https://bing.com", {waitUntil:"domcontentloaded"})
+logs.push("START: https://www.baidu.com")
+// 打开baidu
+await page.goto("https://www.baidu.com", {waitUntil:"domcontentloaded"})
 
-logs.push("STEP1: 搜索'apple stock price'")
+logs.push("STEP1: 搜索'apple股票'")
 // 等待搜索输入框
-await page.waitForSelector(".b_searchbox")
+await page.waitForSelector("#kw")
 // 输入搜索词，点击搜索
-await page.evaluate("const x=document.querySelector('.b_searchbox');x.value='apple stock price';x.form.submit()")
+await page.evaluate("const x=document.querySelector('#kw');x.value='apple股票';x.form.submit()")
 
-logs.push("STEP2: 查找'NASDAQ: AAPL'")
+logs.push("STEP2: 查找'AAPL'")
 // 等待股价关键词
-await page.waitForFunction(step => {
-   try {return document.documentElement.outerHTML.match(/NASDAQ: AAPL/)} 
-   catch (e) { return null }
+await page.waitFor(_ => {
+   try {return !!document.documentElement.outerHTML.match(/AAPL/)} 
+   catch (e) { return false }
 })
 // 返回股价信息
-const rs = await page.evaluate("(_=>{return document.querySelector('.b_focusTextMedium').textContent})()")
+const rs = await page.evaluate("(_=>{return document.querySelector('.op-stockdynamic-moretab-cur-num').textContent})()")
 
 logs.push("STEP3: 股价 " + rs)
 // 关闭
