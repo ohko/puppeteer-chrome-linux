@@ -29,7 +29,7 @@ const browser = ws ?
 const ps = await browser.pages()
 const page = ps.length ? ps.shift() : await browser.newPage();
 await page.goto("about:blank")
-let rs = "";
+let rs;
 
 try{
    // 设置
@@ -97,7 +97,7 @@ const taskSimple = async () => {
 // 初始化
 const browser = await puppeteer.launch({args:["--no-sandbox"]});
 const page = await browser.newPage();
-let rs = "";
+let rs;
 
 try{
    logs.push("START: https://www.baidu.com")
