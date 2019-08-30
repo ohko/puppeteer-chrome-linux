@@ -4,18 +4,7 @@ const axios = require("axios")
 const runner = async (script) => {
    let logs = []
    try {
-      let ws, browser, page;
-      // 查找已有的ws
-      try { ws = (await axios.get('http://127.0.0.1:9222/json/version')).data.webSocketDebuggerUrl } catch (e) { }
       const result = await eval(`(async _=>{` + script.replace(/\\/g, "\\\\") + `})()`)
-      try {
-         page && page.close();
-         if (!ws) {
-            browser && browser.close();
-         }
-      } catch (e) {
-         console.log(e)
-      }
       return { no: 0, data: result, logs: logs }
    } catch (e) {
       return { no: 1, data: e.message ? e.message : e, logs: logs }
@@ -25,8 +14,12 @@ const runner = async (script) => {
 const taskFull = async () => {
    return `// 复杂案例: 查询baidu的股价
 
+// 查找已有的ws
+let ws
+try { ws = (await axios.get('http://127.0.0.1:9222/json/version')).data.webSocketDebuggerUrl } catch (e) { }
+
 // 初始化
-browser = ws ?
+const browser = ws ?
    await puppeteer.connect({ browserWSEndpoint: ws }) :
    await puppeteer.launch({
       headless:false,
@@ -34,7 +27,7 @@ browser = ws ?
       args:["--no-sandbox", "--proxy-server-(remove this)=socks5://127.0.0.1:1080"]
    });
 const ps = await browser.pages()
-page = ps.length ? ps.shift() : await browser.newPage();
+const page = ps.length ? ps.shift() : await browser.newPage();
 await page.goto("about:blank")
 let rs = "";
 
@@ -87,7 +80,11 @@ try{
    logs.push("STEP5: 股价 " + rs)
 }catch(e){
    logs.push(e.Message ? e.Message : e)
-}finally{   
+}finally{
+   // 如果是链接已有的ws，就不关闭
+   ws || await page.close()
+   ws || await browser.close()
+
    // 返回
    return rs
 }
@@ -98,8 +95,8 @@ const taskSimple = async () => {
    return `// 简单案例: 查询apple的股价
 
 // 初始化
-browser = await puppeteer.launch({args:["--no-sandbox"]});
-page = await browser.newPage();
+const browser = await puppeteer.launch({args:["--no-sandbox"]});
+const page = await browser.newPage();
 let rs = "";
 
 try{
@@ -125,7 +122,11 @@ try{
    logs.push("STEP3: 股价 " + rs)
 }catch(e){
    logs.push(e.Message ? e.Message : e)
-}finally{   
+}finally{
+   // 关闭
+   await page.close()
+   await browser.close()
+
    // 返回
    return rs
 }
