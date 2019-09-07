@@ -5,8 +5,9 @@ const runner = async (script) => {
    let logs = []
    try {
       const result = await eval(`(async _=>{` + script.replace(/\\/g, "\\\\") + `})()`)
-      return { no: 0, data: result, logs: logs }
+      return { no: (result === undefined ? 1 : 0), data: result, logs: logs }
    } catch (e) {
+      e = e || {}
       return { no: 1, data: e.message ? e.message : e, logs: logs }
    }
 };
@@ -93,7 +94,7 @@ const taskFull = async () => {
          // 等待股价关键词
          await page.waitForSelector(".op-stockdynamic-moretab-cur-num")
          // 返回股价信息
-         const rs = await page.evaluate(_ => {
+         rs = await page.evaluate(_ => {
             return document.querySelector('.op-stockdynamic-moretab-cur-num').textContent
          })
 
@@ -143,7 +144,7 @@ const taskSimple = async () => {
          // 等待股价关键词
          await page.waitForSelector('.op-stockdynamic-moretab-cur-num')
          // 返回股价信息
-         const rs = await page.evaluate(_ => {
+         rs = await page.evaluate(_ => {
             return document.querySelector('.op-stockdynamic-moretab-cur-num').textContent
          })
 
