@@ -46,4 +46,5 @@ COPY . /app
 RUN npm install
 
 # Start script on Xvfb
-CMD Xvfb :99 -screen 0 1920x1080x24 -dpi 96 -ac +extension RANDR & node server.js
+# CMD Xvfb :99 -screen 0 1920x1080x24 -dpi 96 -ac +extension RANDR & node server.js
+CMD [ "/app/start.sh" ]
