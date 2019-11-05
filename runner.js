@@ -28,15 +28,21 @@ const taskFull = async () => {
       try { ws = (await axios.get('http://127.0.0.1:9222/json/version')).data.webSocketDebuggerUrl } catch (e) { }
 
       // 初始化
+      const width = 1024, height = 768
+      const iPhone = puppeteer.devices['iPhone X'];
       const browser = ws ?
          await puppeteer.connect({ browserWSEndpoint: ws }) :
          await puppeteer.launch({
-            headless: false,
-            devtools: true,
-            args: ["--no-sandbox", "--proxy-server-(remove this)=socks5://127.0.0.1:1080"]
+            headless: false, // 有头
+            devtools: false, // 开发工具
+            slowMo: 100, // 放慢速度，headless=false才有效
+            ignoreHTTPSErrors: true, // 忽略SSL检查
+            defaultViewport: { width, height }, // 页面尺寸
+            args: ["--no-sandbox", "--disable-setuid-sandbox", `--window-size=${width},${height}`, "--proxy-server-(remove this)=socks5://127.0.0.1:1080"]
          });
       const ps = await browser.pages()
       const page = ps.length ? ps.shift() : await browser.newPage();
+      await page.emulate(iPhone);
       await page.goto("about:blank")
       let rs;
 
@@ -44,7 +50,7 @@ const taskFull = async () => {
          // 设置
          await page.setDefaultTimeout(30000)
          await page.setDefaultNavigationTimeout(30000)
-         await page.setViewport({ width: 1024, height: 768 })
+         await page.setViewport({ width, height })
          await page.setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36")
 
          // console
