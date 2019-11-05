@@ -11,6 +11,9 @@ FROM node:12-slim
 #   && apt-get install -y google-chrome-unstable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont xvfb \
 #   --no-install-recommends \
 #   && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+  && apt-get install --no-install-recommends -y xvfb \
+  && rm -rf /var/lib/apt/lists/*
 
 # If running Docker >= 1.13.0 use docker run's --init arg to reap zombie processes, otherwise
 # uncomment the following lines to have `dumb-init` as PID 1
