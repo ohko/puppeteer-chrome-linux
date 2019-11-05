@@ -110,7 +110,6 @@ const taskFull = async () => {
          logs.push(e.message || e)
       } finally {
          // 如果是链接已有的ws，就不关闭
-         ws || await page.close()
          ws || await browser.close()
 
          // 返回
@@ -160,7 +159,6 @@ const taskSimple = async () => {
          logs.push(e.message || e)
       } finally {
          // 关闭
-         await page.close()
          await browser.close()
 
          // 返回
