@@ -13,6 +13,7 @@ FROM node:12-slim
 #   && rm -rf /var/lib/apt/lists/*
 RUN apt-get update \
   && apt-get install --no-install-recommends -y xvfb \
+  libxcomposite1 libxcursor1 libxi6 libxtst6 libglib2.0-0 libnss3 libnspr4 libcups2 libdbus-1-3 libxss1 libxrandr2 libasound2 libatk1.0-0 libatk-bridge2.0-0 libpangocairo-1.0-0 libpango-1.0-0 libgtk-3-0 \
   && rm -rf /var/lib/apt/lists/*
 
 # If running Docker >= 1.13.0 use docker run's --init arg to reap zombie processes, otherwise
