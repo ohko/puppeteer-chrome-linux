@@ -7,6 +7,13 @@ const { runner, taskFull, taskSimple } = require("./runner");
 const app = express();
 const port = process.env.PORT || 8080;
 
+app.use(function (req, res, next) {
+  res.setTimeout(600000, function () {
+    console.log('Request has timed out.');
+    res.send(408);
+  });
+  next();
+});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", express.static("./public"))
