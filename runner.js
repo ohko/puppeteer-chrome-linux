@@ -1,10 +1,10 @@
 const puppeteer = require('puppeteer');
 const axios = require("axios")
 
-const runner = async (script) => {
+const runner = async (script, replaceSlant = true) => {
    let logs = []
    try {
-      const result = await eval(`(async _=>{` + script + `})()`)
+      const result = await eval(`(async _=>{` + (replaceSlant ? script.replace(/\\/g, "\\\\") : script) + `})()`)
       return { no: (result === undefined ? 1 : 0), data: result, logs: logs }
    } catch (e) {
       e = e || {}
