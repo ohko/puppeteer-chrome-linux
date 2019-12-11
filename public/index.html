@@ -117,7 +117,7 @@
             document.getElementById(show).innerHTML = JSON.stringify(xhr.response, "", 2)
          }
       };
-      xhr.send(JSON.stringify({ "task": editor[index].getValue() }));
+      xhr.send(JSON.stringify({ timeout: 600000, task: editor[index].getValue() }));
       return false
    }
 </script>

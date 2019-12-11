@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer');
 const axios = require("axios")
+const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
+const sw = require('selenium-webdriver');
 
 const runner = async (script, replaceSlant = true) => {
    let logs = []
@@ -167,4 +169,20 @@ const taskSimple = async () => {
    })
 }
 
-module.exports = { runner, taskFull, taskSimple }
+const seleniumSimple = async () => {
+   return functionToString(async _ => {
+      // selenium 示例代码
+
+      let driver = await new sw.Builder().forBrowser('chrome').build();
+      try {
+         await driver.get('https://www.baidu.com');
+         await driver.findElement(sw.By.name('wd')).sendKeys('apple', sw.Key.RETURN);
+         await driver.wait(sw.until.titleIs('apple_百度搜索'), 5000);
+         console.log(await driver.getPageSource())
+      } finally {
+         await driver.quit();
+      }
+   })
+}
+
+module.exports = { runner, taskFull, taskSimple, seleniumSimple }
