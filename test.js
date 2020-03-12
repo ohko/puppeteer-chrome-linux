@@ -11,9 +11,7 @@ const { runner, taskFull, taskSimple } = require("./runner");
    })();
 
    // sleep
-   (async _ => {
-      await new Promise(x => setTimeout(x, 2000))
-   })();
+   await (async _ => { await new Promise(x => setTimeout(x, 2000)) })();
 
    await (async _ => {
       console.log("===== Full =====")

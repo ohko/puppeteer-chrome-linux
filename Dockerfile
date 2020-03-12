@@ -45,6 +45,7 @@ ENV DISPLAY :99
 ENV PORT=8080
 ENV TIMEOUT=120000
 EXPOSE 8080
+ADD fonts/simsun.ttf /usr/share/fonts/truetype/
 
 WORKDIR /app
 COPY . /app
