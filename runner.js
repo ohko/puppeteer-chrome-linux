@@ -48,6 +48,13 @@ const taskFull = async () => {
       await page.goto("about:blank")
       let rs;
 
+      // 防止检测Puppeteer
+      await page.evaluateOnNewDocument(() => {
+         Object.defineProperty(navigator, 'webdriver', {
+            get: () => false,
+         });
+      });
+
       try {
          // 设置
          await page.setDefaultTimeout(30000)
